@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { ProductCard } from "@/components/ProductCard";
-import { products, categories } from "@/data/products";
+import { /*products, categories*/ } from "@/data/products";
+import { useProducts, Product } from "@/hooks/useProducts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +18,9 @@ const Products = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredProducts = products.filter((product) => {
+  const { data: products = [], isLoading, isError } = useProducts();
+
+  const filteredProducts = (products as Product[]).filter((product) => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory;
@@ -85,9 +88,9 @@ const Products = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.slug} value={cat.slug}>
-                    {cat.name}
+                {Array.from(new Set(products.map((p) => p.category))).map((cat) => (
+                  <SelectItem key={cat} value={cat.toLowerCase()}>
+                    {cat}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -151,18 +154,18 @@ const Products = () => {
               <div>
                 <h4 className="font-medium mb-3">Categories</h4>
                 <div className="space-y-2">
-                  {categories.map((category) => (
-                    <Button
-                      key={category.slug}
-                      variant={selectedCategory === category.slug ? "default" : "ghost"}
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => setSelectedCategory(category.slug)}
-                    >
-                      {category.name}
-                      <span className="ml-auto text-xs opacity-60">{category.count}</span>
-                    </Button>
-                  ))}
+                  {Array.from(new Set(products.map((p) => p.category))).map((category) => (
+                      <Button
+                        key={category}
+                        variant={selectedCategory === category.toLowerCase() ? "default" : "ghost"}
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => setSelectedCategory(category.toLowerCase())}
+                      >
+                        {category}
+                        <span className="ml-auto text-xs opacity-60">{products.filter((p) => p.category === category).length}</span>
+                      </Button>
+                    ))}
                 </div>
               </div>
             </div>
@@ -233,7 +236,11 @@ const Products = () => {
 
           {/* Products Grid */}
           <div className="flex-1">
-            {sortedProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-16">Loading products...</div>
+            ) : isError ? (
+              <div className="text-center py-16">Failed to load products.</div>
+            ) : sortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedProducts.map((product) => (
                   <ProductCard

@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { getProductById, products } from "@/data/products";
+import { /*getProductById, products*/ } from "@/data/products";
+import { useProduct, useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,11 +30,12 @@ const conditionColors = {
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = getProductById(id || "");
+  const { data: product, isLoading: productLoading } = useProduct(id);
+  const { data: products = [] } = useProducts();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(product?.isFavorite || false);
 
-  if (!product) {
+  if (!product && !productLoading) {
     return (
       <Layout>
         <div className="container py-16 text-center">
@@ -49,8 +51,8 @@ const ProductDetail = () => {
     );
   }
 
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
+  const relatedProducts = (products || [])
+    .filter((p) => p.category === product?.category && p.id !== product?.id)
     .slice(0, 4);
 
   const handleAddToCart = () => {
