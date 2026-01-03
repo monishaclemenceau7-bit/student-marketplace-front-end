@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-import { useCart, useUpdateCartItem, useRemoveFromCart, useClearCart } from "@/hooks/useCart";
-import { Product } from "@/hooks/useProducts";
+import { Link } from 'react-router-dom';
+import { Layout } from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
+import { useCart, useUpdateCartItem, useRemoveFromCart, useClearCart } from '@/hooks/useCart';
+import { Product } from '@/hooks/useProducts';
 
 const Cart = () => {
   const { data: cart, isLoading } = useCart();
@@ -13,43 +13,45 @@ const Cart = () => {
   const clearCart = useClearCart();
 
   const cartItems = cart?.items || [];
-  
-  const cartProducts = cartItems.map((item) => ({
-    ...item,
-    product: typeof item.product === 'object' ? item.product : null,
-  })).filter((item) => item.product) as Array<{ product: Product; quantity: number }>;
+
+  const cartProducts = cartItems
+    .map((item) => ({
+      ...item,
+      product: typeof item.product === 'object' ? item.product : null,
+    }))
+    .filter((item) => item.product) as Array<{ product: Product; quantity: number }>;
 
   const updateQuantity = async (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     try {
       await updateCartItem.mutateAsync({ productId, quantity: newQuantity });
-    } catch (error: any) {
-      toast.error("Failed to update quantity", { description: error.message });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      toast.error('Failed to update quantity', { description: errorMessage });
     }
   };
 
   const removeItem = async (productId: string) => {
     try {
       await removeFromCart.mutateAsync(productId);
-      toast.success("Item removed from cart");
-    } catch (error: any) {
-      toast.error("Failed to remove item", { description: error.message });
+      toast.success('Item removed from cart');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      toast.error('Failed to remove item', { description: errorMessage });
     }
   };
 
   const handleClearCart = async () => {
     try {
       await clearCart.mutateAsync();
-      toast.success("Cart cleared");
-    } catch (error: any) {
-      toast.error("Failed to clear cart", { description: error.message });
+      toast.success('Cart cleared');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      toast.error('Failed to clear cart', { description: errorMessage });
     }
   };
 
-  const subtotal = cartProducts.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const subtotal = cartProducts.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const serviceFee = subtotal * 0.05;
   const total = subtotal + serviceFee;
 
@@ -99,7 +101,7 @@ const Cart = () => {
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">Shopping Cart</h1>
             <p className="text-muted-foreground">
-              {cartProducts.length} item{cartProducts.length !== 1 && "s"} in your cart
+              {cartProducts.length} item{cartProducts.length !== 1 && 's'} in your cart
             </p>
           </div>
         </div>
@@ -127,11 +129,9 @@ const Cart = () => {
                     </h3>
                   </Link>
                   <p className="text-sm text-muted-foreground mb-2">
-                    Sold by {product.seller.name}
+                    Sold by {product.seller?.name || 'Unknown Seller'}
                   </p>
-                  <p className="text-lg font-bold text-primary">
-                    ${product.price.toFixed(2)}
-                  </p>
+                  <p className="text-lg font-bold text-primary">${product.price.toFixed(2)}</p>
                 </div>
 
                 <div className="flex flex-col items-end justify-between">
@@ -199,7 +199,7 @@ const Cart = () => {
               <Button
                 size="lg"
                 className="w-full mt-6"
-                onClick={() => toast.success("Proceeding to checkout...")}
+                onClick={() => toast.success('Proceeding to checkout...')}
               >
                 Proceed to Checkout
               </Button>

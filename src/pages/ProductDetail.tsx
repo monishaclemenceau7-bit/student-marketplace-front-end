@@ -1,34 +1,34 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import { /*getProductById, products*/ } from "@/data/products";
-import { useProduct, useProducts } from "@/hooks/useProducts";
-import { useAddToCart } from "@/hooks/useCart";
-import { useToggleFavorite } from "@/hooks/useFavorites";
-import { useIsAuthenticated } from "@/hooks/useAuth";
-import { ProductCard } from "@/components/ProductCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Heart, 
-  Share2, 
-  MapPin, 
-  MessageCircle, 
-  ShoppingCart, 
-  Star, 
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Layout } from '@/components/layout/Layout';
+import /*getProductById, products*/ '@/data/products';
+import { useProduct, useProducts } from '@/hooks/useProducts';
+import { useAddToCart } from '@/hooks/useCart';
+import { useToggleFavorite } from '@/hooks/useFavorites';
+import { useIsAuthenticated } from '@/hooks/useAuth';
+import { ProductCard } from '@/components/ProductCard';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Heart,
+  Share2,
+  MapPin,
+  MessageCircle,
+  ShoppingCart,
+  Star,
   ChevronLeft,
   Calendar,
-  Shield
-} from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+  Shield,
+} from 'lucide-react';
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const conditionColors = {
-  new: "bg-success text-success-foreground",
-  "like-new": "bg-accent text-accent-foreground",
-  good: "bg-primary text-primary-foreground",
-  fair: "bg-warning text-warning-foreground",
+  new: 'bg-success text-success-foreground',
+  'like-new': 'bg-accent text-accent-foreground',
+  good: 'bg-primary text-primary-foreground',
+  fair: 'bg-warning text-warning-foreground',
 };
 
 const ProductDetail = () => {
@@ -37,7 +37,7 @@ const ProductDetail = () => {
   const { data: product, isLoading: productLoading } = useProduct(id);
   const { data: products = [] } = useProducts();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  
+
   const { isAuthenticated } = useIsAuthenticated();
   const addToCart = useAddToCart();
   const { toggleFavorite, isLoading: favoriteLoading } = useToggleFavorite();
@@ -76,52 +76,54 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error("Login required", {
-        description: "Please login to add items to your cart.",
+      toast.error('Login required', {
+        description: 'Please login to add items to your cart.',
       });
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
     try {
       await addToCart.mutateAsync({ productId: product.id, quantity: 1 });
-      toast.success("Added to cart!", {
+      toast.success('Added to cart!', {
         description: `${product.title} has been added to your cart.`,
       });
-    } catch (error: any) {
-      toast.error("Failed to add to cart", {
-        description: error.message || "Please try again.",
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Please try again.';
+      toast.error('Failed to add to cart', {
+        description: errorMessage,
       });
     }
   };
 
   const handleFavoriteToggle = async () => {
     if (!isAuthenticated) {
-      toast.error("Login required", {
-        description: "Please login to save favorites.",
+      toast.error('Login required', {
+        description: 'Please login to save favorites.',
       });
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
     try {
       await toggleFavorite(product.id, isFavorite);
       setIsFavorite(!isFavorite);
-      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
-    } catch (error: any) {
-      toast.error("Failed to update favorites", {
-        description: error.message || "Please try again.",
+      toast.success(isFavorite ? 'Removed from favorites' : 'Added to favorites');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Please try again.';
+      toast.error('Failed to update favorites', {
+        description: errorMessage,
       });
     }
   };
 
   const handleContact = () => {
-    toast.success("Message sent!", {
-      description: `Your message has been sent to ${product.seller.name}.`,
+    toast.success('Message sent!', {
+      description: `Your message has been sent to ${product.seller?.name || 'the seller'}.`,
     });
   };
 
-  const savings = product.originalPrice 
+  const savings = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
@@ -130,9 +132,13 @@ const ProductDetail = () => {
       <div className="container py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary">Home</Link>
+          <Link to="/" className="hover:text-primary">
+            Home
+          </Link>
           <span>/</span>
-          <Link to="/products" className="hover:text-primary">Products</Link>
+          <Link to="/products" className="hover:text-primary">
+            Products
+          </Link>
           <span>/</span>
           <Link to={`/category/${product.category.toLowerCase()}`} className="hover:text-primary">
             {product.category}
@@ -154,19 +160,20 @@ const ProductDetail = () => {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "absolute top-4 right-4 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm",
-                  isFavorite && "text-primary"
+                  'absolute top-4 right-4 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm',
+                  isFavorite && 'text-primary'
                 )}
                 onClick={handleFavoriteToggle}
                 disabled={favoriteLoading}
               >
-                <Heart className={cn("h-5 w-5", isFavorite && "fill-current")} />
+                <Heart className={cn('h-5 w-5', isFavorite && 'fill-current')} />
               </Button>
-              <Badge className={cn("absolute top-4 left-4", conditionColors[product.condition])}>
-                {product.condition.charAt(0).toUpperCase() + product.condition.slice(1).replace("-", " ")}
+              <Badge className={cn('absolute top-4 left-4', conditionColors[product.condition])}>
+                {product.condition.charAt(0).toUpperCase() +
+                  product.condition.slice(1).replace('-', ' ')}
               </Badge>
             </div>
-            
+
             {product.images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {product.images.map((img, idx) => (
@@ -174,8 +181,10 @@ const ProductDetail = () => {
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
                     className={cn(
-                      "shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition-all",
-                      selectedImageIndex === idx ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
+                      'shrink-0 h-20 w-20 rounded-lg overflow-hidden border-2 transition-all',
+                      selectedImageIndex === idx
+                        ? 'border-primary'
+                        : 'border-transparent opacity-60 hover:opacity-100'
                     )}
                   >
                     <img src={img} alt="" className="h-full w-full object-cover" />
@@ -195,9 +204,9 @@ const ProductDetail = () => {
                   {product.location}
                 </span>
               </div>
-              
+
               <h1 className="text-2xl md:text-3xl font-bold mb-4">{product.title}</h1>
-              
+
               <div className="flex items-baseline gap-3 mb-4">
                 <span className="text-3xl md:text-4xl font-bold text-primary">
                   ${product.price.toFixed(2)}
@@ -207,9 +216,7 @@ const ProductDetail = () => {
                     <span className="text-lg text-muted-foreground line-through">
                       ${product.originalPrice.toFixed(2)}
                     </span>
-                    <Badge className="bg-success text-success-foreground">
-                      Save {savings}%
-                    </Badge>
+                    <Badge className="bg-success text-success-foreground">Save {savings}%</Badge>
                   </>
                 )}
               </div>
@@ -219,20 +226,31 @@ const ProductDetail = () => {
             <div className="p-4 rounded-xl bg-secondary/50 border border-border/50">
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={product.seller.avatar} alt={product.seller.name} />
-                  <AvatarFallback>{product.seller.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage
+                    src={product.seller?.avatar}
+                    alt={product.seller?.name || 'Seller'}
+                  />
+                  <AvatarFallback>{product.seller?.name?.charAt(0) || 'S'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="font-semibold">{product.seller.name}</p>
+                  <p className="font-semibold">{product.seller?.name || 'Unknown Seller'}</p>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-warning text-warning" />
-                      {product.seller.rating}
-                    </span>
-                    <span>•</span>
-                    <span>{product.seller.reviews} reviews</span>
-                    <span>•</span>
-                    <span>{product.seller.university}</span>
+                    {product.seller?.rating && (
+                      <>
+                        <span className="flex items-center gap-1">
+                          <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                          {product.seller.rating}
+                        </span>
+                        <span>•</span>
+                      </>
+                    )}
+                    {product.seller?.reviews && (
+                      <>
+                        <span>{product.seller.reviews} reviews</span>
+                        <span>•</span>
+                      </>
+                    )}
+                    {product.seller?.university && <span>{product.seller.university}</span>}
                   </div>
                 </div>
                 <Button variant="outline" size="sm">
@@ -243,14 +261,14 @@ const ProductDetail = () => {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                size="lg" 
-                className="flex-1 gap-2" 
+              <Button
+                size="lg"
+                className="flex-1 gap-2"
                 onClick={handleAddToCart}
                 disabled={addToCart.isPending}
               >
                 <ShoppingCart className="h-5 w-5" />
-                {addToCart.isPending ? "Adding..." : "Add to Cart"}
+                {addToCart.isPending ? 'Adding...' : 'Add to Cart'}
               </Button>
               <Button size="lg" variant="outline" className="flex-1 gap-2" onClick={handleContact}>
                 <MessageCircle className="h-5 w-5" />
@@ -273,7 +291,7 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-lg bg-secondary/50">
                 <p className="text-sm text-muted-foreground mb-1">Condition</p>
-                <p className="font-medium capitalize">{product.condition.replace("-", " ")}</p>
+                <p className="font-medium capitalize">{product.condition.replace('-', ' ')}</p>
               </div>
               <div className="p-4 rounded-lg bg-secondary/50">
                 <p className="text-sm text-muted-foreground mb-1">Listed</p>
@@ -290,7 +308,8 @@ const ProductDetail = () => {
               <div>
                 <p className="font-medium text-sm">Safety Tips</p>
                 <p className="text-sm text-muted-foreground">
-                  Meet in public places, inspect items before payment, and use campus-approved payment methods.
+                  Meet in public places, inspect items before payment, and use campus-approved
+                  payment methods.
                 </p>
               </div>
             </div>

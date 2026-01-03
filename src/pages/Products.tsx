@@ -1,54 +1,64 @@
-import { useState, useMemo } from "react";
-import { Layout } from "@/components/layout/Layout";
-import { ProductCard } from "@/components/ProductCard";
-import { useProducts, Product } from "@/hooks/useProducts";
-import { useCategories } from "@/hooks/useCategories";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Search, SlidersHorizontal, X } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useMemo } from 'react';
+import { Layout } from '@/components/layout/Layout';
+import { ProductCard } from '@/components/ProductCard';
+import { useProducts, Product } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const conditions = ["new", "like-new", "good", "fair"] as const;
+const conditions = ['new', 'like-new', 'good', 'fair'] as const;
 
 const Products = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "price-asc" | "price-desc">("newest");
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'price-asc' | 'price-desc'>('newest');
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch categories for filter dropdown
   const { data: categories = [] } = useCategories();
 
   // Build filters object for API
-  const filters = useMemo(() => ({
-    search: searchQuery || undefined,
-    category: selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined,
-    condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
-    sort: sortBy,
-  }), [searchQuery, selectedCategory, selectedConditions, sortBy]);
+  const filters = useMemo(
+    () => ({
+      search: searchQuery || undefined,
+      category: selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined,
+      condition: selectedConditions.length > 0 ? selectedConditions.join(',') : undefined,
+      sort: sortBy,
+    }),
+    [searchQuery, selectedCategory, selectedConditions, sortBy]
+  );
 
   // Fetch products with filters
   const { data: products = [], isLoading, isError } = useProducts(filters);
 
   const toggleCondition = (condition: string) => {
     setSelectedConditions((prev) =>
-      prev.includes(condition)
-        ? prev.filter((c) => c !== condition)
-        : [...prev, condition]
+      prev.includes(condition) ? prev.filter((c) => c !== condition) : [...prev, condition]
     );
   };
 
   const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedCategory("all");
+    setSearchQuery('');
+    setSelectedCategory('all');
     setSelectedConditions([]);
-    setSortBy("newest");
+    setSortBy('newest');
   };
 
-  const hasActiveFilters = searchQuery || (selectedCategory && selectedCategory !== 'all') || selectedConditions.length > 0;
+  const hasActiveFilters =
+    searchQuery ||
+    (selectedCategory && selectedCategory !== 'all') ||
+    selectedConditions.length > 0;
 
   return (
     <Layout>
@@ -57,7 +67,9 @@ const Products = () => {
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Browse Products</h1>
           <p className="text-muted-foreground">
-            {isLoading ? "Loading products..." : `Discover ${products.length} items from your campus community`}
+            {isLoading
+              ? 'Loading products...'
+              : `Discover ${products.length} items from your campus community`}
           </p>
         </div>
 
@@ -73,7 +85,7 @@ const Products = () => {
               className="pl-10"
             />
           </div>
-          
+
           <div className="flex gap-2">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-40">
@@ -89,10 +101,7 @@ const Products = () => {
               </SelectContent>
             </Select>
 
-            <Select 
-              value={sortBy} 
-              onValueChange={(value) => setSortBy(value as typeof sortBy)}
-            >
+            <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
               <SelectTrigger className="w-44">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -141,7 +150,7 @@ const Products = () => {
                         onCheckedChange={() => toggleCondition(condition)}
                       />
                       <label htmlFor={condition} className="text-sm capitalize cursor-pointer">
-                        {condition.replace("-", " ")}
+                        {condition.replace('-', ' ')}
                       </label>
                     </div>
                   ))}
@@ -152,17 +161,19 @@ const Products = () => {
                 <h4 className="font-medium mb-3">Categories</h4>
                 <div className="space-y-2">
                   {Array.from(new Set(products.map((p) => p.category))).map((category) => (
-                      <Button
-                        key={category}
-                        variant={selectedCategory === category.toLowerCase() ? "default" : "ghost"}
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => setSelectedCategory(category.toLowerCase())}
-                      >
-                        {category}
-                        <span className="ml-auto text-xs opacity-60">{products.filter((p) => p.category === category).length}</span>
-                      </Button>
-                    ))}
+                    <Button
+                      key={category}
+                      variant={selectedCategory === category.toLowerCase() ? 'default' : 'ghost'}
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => setSelectedCategory(category.toLowerCase())}
+                    >
+                      {category}
+                      <span className="ml-auto text-xs opacity-60">
+                        {products.filter((p) => p.category === category).length}
+                      </span>
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -177,7 +188,7 @@ const Products = () => {
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              
+
               <div className="space-y-6">
                 <div>
                   <h4 className="font-medium mb-3">Condition</h4>
@@ -189,8 +200,11 @@ const Products = () => {
                           checked={selectedConditions.includes(condition)}
                           onCheckedChange={() => toggleCondition(condition)}
                         />
-                        <label htmlFor={`mobile-${condition}`} className="text-sm capitalize cursor-pointer">
-                          {condition.replace("-", " ")}
+                        <label
+                          htmlFor={`mobile-${condition}`}
+                          className="text-sm capitalize cursor-pointer"
+                        >
+                          {condition.replace('-', ' ')}
                         </label>
                       </div>
                     ))}
@@ -203,7 +217,7 @@ const Products = () => {
                     {categories.map((category) => (
                       <Button
                         key={category.slug}
-                        variant={selectedCategory === category.slug ? "default" : "ghost"}
+                        variant={selectedCategory === category.slug ? 'default' : 'ghost'}
                         size="sm"
                         className="w-full justify-start"
                         onClick={() => {
@@ -259,14 +273,16 @@ const Products = () => {
                     category={product.category}
                     condition={product.condition}
                     location={product.location}
-                    seller={product.seller.name}
+                    seller={product.seller?.name || 'Unknown Seller'}
                     isFavorite={product.isFavorite}
                   />
                 ))}
               </div>
             ) : (
               <div className="text-center py-16">
-                <p className="text-muted-foreground mb-4">No products found matching your criteria.</p>
+                <p className="text-muted-foreground mb-4">
+                  No products found matching your criteria.
+                </p>
                 <Button variant="outline" onClick={clearFilters}>
                   Clear Filters
                 </Button>

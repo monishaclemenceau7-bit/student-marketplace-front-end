@@ -1,12 +1,21 @@
-import { useParams, Link } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import { ProductCard } from "@/components/ProductCard";
-import { getProductsByCategory, categories } from "@/data/products";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Laptop, Sofa, Shirt, Music, Dumbbell } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useParams, Link } from 'react-router-dom';
+import { Layout } from '@/components/layout/Layout';
+import { ProductCard } from '@/components/ProductCard';
+import { getProductsByCategory, categories } from '@/data/products';
+import { Button } from '@/components/ui/button';
+import {
+  ArrowLeft,
+  BookOpen,
+  Laptop,
+  Sofa,
+  Shirt,
+  Music,
+  Dumbbell,
+  LucideIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, LucideIcon> = {
   books: BookOpen,
   electronics: Laptop,
   furniture: Sofa,
@@ -16,19 +25,19 @@ const categoryIcons: Record<string, any> = {
 };
 
 const categoryDescriptions: Record<string, string> = {
-  books: "Textbooks, novels, study guides, and academic materials from fellow students.",
-  electronics: "Laptops, phones, tablets, headphones, and other tech gadgets.",
-  furniture: "Desks, chairs, shelves, and dorm essentials for your space.",
-  clothing: "Clothes, shoes, and accessories in great condition.",
-  music: "Instruments, audio equipment, and music accessories.",
-  sports: "Sports equipment, gym gear, and outdoor accessories.",
+  books: 'Textbooks, novels, study guides, and academic materials from fellow students.',
+  electronics: 'Laptops, phones, tablets, headphones, and other tech gadgets.',
+  furniture: 'Desks, chairs, shelves, and dorm essentials for your space.',
+  clothing: 'Clothes, shoes, and accessories in great condition.',
+  music: 'Instruments, audio equipment, and music accessories.',
+  sports: 'Sports equipment, gym gear, and outdoor accessories.',
 };
 
 const Category = () => {
   const { slug } = useParams();
-  const categoryProducts = getProductsByCategory(slug || "");
+  const categoryProducts = getProductsByCategory(slug || '');
   const category = categories.find((c) => c.slug === slug);
-  const Icon = categoryIcons[slug || ""] || BookOpen;
+  const Icon = categoryIcons[slug || ''] || BookOpen;
 
   if (!category) {
     return (
@@ -51,9 +60,13 @@ const Category = () => {
       <div className="container py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary">Home</Link>
+          <Link to="/" className="hover:text-primary">
+            Home
+          </Link>
           <span>/</span>
-          <Link to="/products" className="hover:text-primary">Products</Link>
+          <Link to="/products" className="hover:text-primary">
+            Products
+          </Link>
           <span>/</span>
           <span className="text-foreground">{category.name}</span>
         </div>
@@ -66,10 +79,11 @@ const Category = () => {
           <div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">{category.name}</h1>
             <p className="text-muted-foreground max-w-2xl">
-              {categoryDescriptions[slug || ""] || `Browse all ${category.name.toLowerCase()} available on campus.`}
+              {categoryDescriptions[slug || ''] ||
+                `Browse all ${category.name.toLowerCase()} available on campus.`}
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              {categoryProducts.length} item{categoryProducts.length !== 1 && "s"} available
+              {categoryProducts.length} item{categoryProducts.length !== 1 && 's'} available
             </p>
           </div>
         </div>
@@ -81,7 +95,7 @@ const Category = () => {
             return (
               <Link key={cat.slug} to={`/category/${cat.slug}`}>
                 <Button
-                  variant={cat.slug === slug ? "default" : "outline"}
+                  variant={cat.slug === slug ? 'default' : 'outline'}
                   size="sm"
                   className="gap-2 shrink-0"
                 >
@@ -106,7 +120,7 @@ const Category = () => {
                 category={product.category}
                 condition={product.condition}
                 location={product.location}
-                seller={product.seller.name}
+                seller={product.seller?.name || 'Unknown Seller'}
                 isFavorite={product.isFavorite}
               />
             ))}

@@ -1,28 +1,29 @@
-import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProductCard } from "@/components/ProductCard";
-import { 
-  Settings, 
-  MapPin, 
-  Star, 
-  Calendar, 
-  ShoppingBag, 
-  Heart, 
+import { Layout } from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProductCard } from '@/components/ProductCard';
+import {
+  Settings,
+  MapPin,
+  Star,
+  Calendar,
+  ShoppingBag,
+  Heart,
   Package,
   Edit,
   GraduationCap,
   LogOut,
   Mail,
-  Phone
-} from "lucide-react";
-import { useProfile, useLogout } from "@/hooks/useAuth";
-import { useMyListings } from "@/hooks/useProducts";
-import { useFavorites } from "@/hooks/useFavorites";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+  Phone,
+} from 'lucide-react';
+import { useProfile, useLogout } from '@/hooks/useAuth';
+import { useMyListings } from '@/hooks/useProducts';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Product } from '@/hooks/useProducts';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -34,10 +35,11 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
-      toast.success("Logged out successfully");
-      navigate("/login");
-    } catch (error: any) {
-      toast.error("Logout failed", { description: error.message });
+      toast.success('Logged out successfully');
+      navigate('/login');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+      toast.error('Logout failed', { description: errorMessage });
     }
   };
 
@@ -54,13 +56,13 @@ const Profile = () => {
       <Layout>
         <div className="container py-16 text-center">
           <p className="mb-4">Please log in to view your profile.</p>
-          <Button onClick={() => navigate("/login")}>Go to Login</Button>
+          <Button onClick={() => navigate('/login')}>Go to Login</Button>
         </div>
       </Layout>
     );
   }
 
-  const purchases: any[] = []; // Purchases endpoint not yet implemented
+  const purchases: Product[] = []; // Purchases endpoint not yet implemented
 
   return (
     <Layout>
@@ -69,14 +71,14 @@ const Profile = () => {
         <div className="relative mb-8">
           {/* Cover */}
           <div className="h-32 md:h-48 rounded-xl gradient-hero" />
-          
+
           {/* Profile Info */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 -mt-12 md:-mt-16 px-4 md:px-6">
             <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-background shadow-lg">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1 pt-2 md:pt-12">
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2">
                 <h1 className="text-2xl md:text-3xl font-bold">{user.name}</h1>
@@ -85,13 +87,13 @@ const Profile = () => {
                   {user.rating} ({user.reviews} reviews)
                 </Badge>
               </div>
-              
+
               <p className="text-muted-foreground mb-3">{user.university}</p>
-              
+
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  {user.university || "ESILV"}
+                  {user.university || 'ESILV'}
                 </span>
                 {user.studentId && (
                   <span className="flex items-center gap-1">
@@ -101,11 +103,15 @@ const Profile = () => {
                 )}
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  Member since{' '}
+                  {new Date(user.createdAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </span>
               </div>
             </div>
-            
+
             <div className="flex gap-2 md:pt-12">
               <Button variant="outline" size="sm" className="gap-2">
                 <Edit className="h-4 w-4" />
@@ -141,28 +147,28 @@ const Profile = () => {
         {/* Tabs */}
         <Tabs defaultValue="listings" className="space-y-6">
           <TabsList className="w-full justify-start bg-transparent border-b border-border rounded-none h-auto p-0 space-x-6">
-            <TabsTrigger 
-              value="listings" 
+            <TabsTrigger
+              value="listings"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 pb-3"
             >
               <ShoppingBag className="h-4 w-4 mr-2" />
               My Listings
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="favorites"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 pb-3"
             >
               <Heart className="h-4 w-4 mr-2" />
               Favorites
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="purchases"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 pb-3"
             >
               <Package className="h-4 w-4 mr-2" />
               Purchases
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="settings"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 pb-3"
             >
@@ -191,7 +197,9 @@ const Profile = () => {
               <div className="text-center py-12">
                 <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No listings yet</h3>
-                <p className="text-muted-foreground mb-4">Start selling by listing your first item.</p>
+                <p className="text-muted-foreground mb-4">
+                  Start selling by listing your first item.
+                </p>
                 <Button>Create Listing</Button>
               </div>
             )}
@@ -210,7 +218,7 @@ const Profile = () => {
                     category={product.category}
                     condition={product.condition}
                     location={product.location}
-                    seller={product.seller.name}
+                    seller={product.seller?.name || 'Unknown Seller'}
                     isFavorite
                   />
                 ))}
@@ -219,7 +227,9 @@ const Profile = () => {
               <div className="text-center py-12">
                 <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No favorites yet</h3>
-                <p className="text-muted-foreground">Save items you like by clicking the heart icon.</p>
+                <p className="text-muted-foreground">
+                  Save items you like by clicking the heart icon.
+                </p>
               </div>
             )}
           </TabsContent>
@@ -236,7 +246,7 @@ const Profile = () => {
                   category={product.category}
                   condition={product.condition}
                   location={product.location}
-                  seller={product.seller.name}
+                  seller={product.seller?.name || 'Unknown Seller'}
                 />
               ))}
             </div>
@@ -271,14 +281,14 @@ const Profile = () => {
                     <Edit className="h-4 w-4" />
                     Edit Profile
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full justify-start gap-2 text-destructive hover:text-destructive"
                     onClick={handleLogout}
                     disabled={logoutMutation.isPending}
                   >
                     <LogOut className="h-4 w-4" />
-                    {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                    {logoutMutation.isPending ? 'Signing out...' : 'Sign Out'}
                   </Button>
                 </div>
               </div>

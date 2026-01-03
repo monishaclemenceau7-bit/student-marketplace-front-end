@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '@/lib/api';
 
 export type Seller = {
   id: string;
@@ -19,9 +19,9 @@ export type Product = {
   image?: string;
   images: string[];
   category: string;
-  condition: "new" | "like-new" | "good" | "fair";
+  condition: 'new' | 'like-new' | 'good' | 'fair';
   location?: string;
-  seller: Seller;
+  seller: Seller | null;
   isFavorite?: boolean;
   createdAt: string;
 };
@@ -39,7 +39,7 @@ export type ProductFilters = {
 
 export const useProducts = (filters?: ProductFilters) => {
   return useQuery<Product[]>({
-    queryKey: ["products", filters],
+    queryKey: ['products', filters],
     queryFn: async () => {
       const response = await api.get<{ products: Product[] }>('/products', filters);
       return response.products || [];
@@ -50,7 +50,7 @@ export const useProducts = (filters?: ProductFilters) => {
 
 export const useProduct = (id?: string) => {
   return useQuery<Product | undefined>({
-    queryKey: ["products", id],
+    queryKey: ['products', id],
     queryFn: async () => {
       if (!id) return undefined;
       const data = await api.get<Product>(`/products/${id}`);
@@ -62,7 +62,7 @@ export const useProduct = (id?: string) => {
 
 export const useProductsByCategory = (category?: string) => {
   return useQuery<Product[]>({
-    queryKey: ["products", "category", category],
+    queryKey: ['products', 'category', category],
     queryFn: async () => {
       if (!category) return [];
       const data = await api.get<Product[]>(`/products/category/${category}`);
@@ -74,7 +74,7 @@ export const useProductsByCategory = (category?: string) => {
 
 export const useSellerProducts = (sellerId?: string) => {
   return useQuery<Product[]>({
-    queryKey: ["products", "seller", sellerId],
+    queryKey: ['products', 'seller', sellerId],
     queryFn: async () => {
       if (!sellerId) return [];
       const data = await api.get<Product[]>(`/products/seller/${sellerId}`);
@@ -86,7 +86,7 @@ export const useSellerProducts = (sellerId?: string) => {
 
 export const useMyListings = () => {
   return useQuery<Product[]>({
-    queryKey: ["products", "my-listings"],
+    queryKey: ['products', 'my-listings'],
     queryFn: async () => {
       const data = await api.get<Product[]>('/products/my/listings');
       return data || [];
@@ -96,43 +96,43 @@ export const useMyListings = () => {
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (productData: Partial<Product>) => {
       return api.post<Product>('/products', productData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["products", "my-listings"] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', 'my-listings'] });
     },
   });
 };
 
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (params: { id: string; data: Partial<Product> }) => {
       return api.put<Product>(`/products/${params.id}`, params.data);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["products", variables.id] });
-      queryClient.invalidateQueries({ queryKey: ["products", "my-listings"] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['products', 'my-listings'] });
     },
   });
 };
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       return api.del(`/products/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["products", "my-listings"] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', 'my-listings'] });
     },
   });
 };

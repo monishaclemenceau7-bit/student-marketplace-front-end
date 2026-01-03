@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Laptop, Sofa, Shirt, Music, Dumbbell, Shield, Users, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Layout } from "@/components/layout/Layout";
-import { ProductCard } from "@/components/ProductCard";
-import { CategoryCard } from "@/components/CategoryCard";
-import { products, categories } from "@/data/products";
+import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  BookOpen,
+  Laptop,
+  Sofa,
+  Shirt,
+  Music,
+  Dumbbell,
+  Shield,
+  Users,
+  Zap,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Layout } from '@/components/layout/Layout';
+import { ProductCard } from '@/components/ProductCard';
+import { CategoryCard } from '@/components/CategoryCard';
+import { products, categories } from '@/data/products';
 
 const categoryIcons = {
   books: BookOpen,
@@ -18,18 +29,18 @@ const categoryIcons = {
 const features = [
   {
     icon: Shield,
-    title: "Secure Transactions",
-    description: "All transactions are protected with end-to-end encryption.",
+    title: 'Secure Transactions',
+    description: 'All transactions are protected with end-to-end encryption.',
   },
   {
     icon: Users,
-    title: "Verified Students",
-    description: "Only verified university students can join our marketplace.",
+    title: 'Verified Students',
+    description: 'Only verified university students can join our marketplace.',
   },
   {
     icon: Zap,
-    title: "Instant Messaging",
-    description: "Connect directly with buyers and sellers in real-time.",
+    title: 'Instant Messaging',
+    description: 'Connect directly with buyers and sellers in real-time.',
   },
 ];
 
@@ -42,7 +53,7 @@ const Index = () => {
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--accent)/0.1),transparent_50%)]" />
-        
+
         <div className="container relative py-20 lg:py-32">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -52,17 +63,17 @@ const Index = () => {
               </span>
               Join ESILV students already trading
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight mb-6">
               Buy, Sell & Exchange
               <span className="block text-gradient">Within ESILV Community</span>
             </h1>
-            
+
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              The official ESILV student marketplace. Find textbooks, electronics, 
-              furniture, and more at student-friendly prices within our engineering community.
+              The official ESILV student marketplace. Find textbooks, electronics, furniture, and
+              more at student-friendly prices within our engineering community.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/products">
                 <Button size="lg" className="text-base px-8 gap-2">
@@ -95,7 +106,7 @@ const Index = () => {
               </Button>
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map((category) => {
               const Icon = categoryIcons[category.slug as keyof typeof categoryIcons] || BookOpen;
@@ -119,7 +130,9 @@ const Index = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold mb-2">Featured Listings</h2>
-              <p className="text-muted-foreground">Discover the latest items from fellow students.</p>
+              <p className="text-muted-foreground">
+                Discover the latest items from fellow students.
+              </p>
             </div>
             <Link to="/products">
               <Button variant="ghost" className="gap-2">
@@ -128,7 +141,7 @@ const Index = () => {
               </Button>
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
               <ProductCard
@@ -140,7 +153,7 @@ const Index = () => {
                 category={product.category}
                 condition={product.condition}
                 location={product.location}
-                seller={product.seller.name}
+                seller={product.seller?.name || 'Unknown Seller'}
                 isFavorite={product.isFavorite}
               />
             ))}
@@ -152,12 +165,14 @@ const Index = () => {
       <section className="py-16 bg-secondary/30">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-2">Why ESILV Marketplace?</h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-2">
+              Why ESILV Marketplace?
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Built by ESILV students, for ESILV students. We understand what engineers need.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature) => (
               <div
