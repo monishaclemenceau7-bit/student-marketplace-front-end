@@ -10,8 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "preview": "vite preview",
-    "postinstall": "npx update-browserslist-db@latest --update-db || true"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
