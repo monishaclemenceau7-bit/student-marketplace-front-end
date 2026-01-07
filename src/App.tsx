@@ -16,6 +16,8 @@ import Help from './pages/Help';
 import NotFound from './pages/NotFound';
 import VerificationPending from './pages/VerificationPending';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +51,8 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/about" element={<About />} />
           <Route path="/help" element={<Help />} />
           <Route path="/verification-pending" element={<VerificationPending />} />
