@@ -25,7 +25,9 @@ const VerifyEmail = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/api/auth/verify-email?token=${token}`);
+        // Use the API base URL from environment variables
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+        const response = await fetch(`${apiUrl}/auth/verify-email?token=${token}`);
 
         if (response.ok) {
           const data = await response.json();
