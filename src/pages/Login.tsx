@@ -33,10 +33,20 @@ const Login = () => {
       return;
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(loginEmail)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    // Sanitize inputs (trim whitespace)
+    const sanitizedEmail = loginEmail.trim().toLowerCase();
+
     try {
       await loginMutation.mutateAsync({
-        email: loginEmail,
-        password: loginPassword,
+        email: sanitizedEmail,
+        password: loginPassword, // Never trim passwords
       });
       toast.success('Login successful! Welcome back to ESILV Marketplace.');
       navigate('/');
@@ -91,8 +101,18 @@ const Login = () => {
       return;
     }
 
-    if (registerPassword.length < 6) {
-      toast.error('Password must be at least 6 characters long');
+    if (registerPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long');
+      return;
+    }
+
+    // Password strength validation
+    const hasUpperCase = /[A-Z]/.test(registerPassword);
+    const hasLowerCase = /[a-z]/.test(registerPassword);
+    const hasNumber = /\d/.test(registerPassword);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+      toast.error('Password must contain uppercase, lowercase, and numbers');
       return;
     }
 
